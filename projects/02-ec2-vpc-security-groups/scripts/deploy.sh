@@ -133,7 +133,7 @@ export PRIVATE_RTB_ID
 echo "▶ Creating Security Group (no port 22 — SSM only)..."
 SG_ID=$(aws ec2 create-security-group \
   --group-name "aws-cert-study-sg" \
-  --description "Lab 02 — SSM access only, no open SSH" \
+  --description "Lab 02 - SSM access only, no open SSH" \
   --vpc-id "$VPC_ID" \
   --query 'GroupId' --output text \
   --region "$AWS_REGION")
@@ -198,7 +198,7 @@ echo "▶ Launching EC2 instance ($INSTANCE_TYPE)..."
 INSTANCE_ID=$(aws ec2 run-instances \
   --image-id "$AMI_ID" \
   --instance-type "$INSTANCE_TYPE" \
-  --subnet-id "$PUBLIC_SUBNET_ID" \
+  --subnet-id "$PRIVATE_SUBNET_ID" \
   --security-group-ids "$SG_ID" \
   --iam-instance-profile Name="$INSTANCE_PROFILE_NAME" \
   --no-associate-public-ip-address \
