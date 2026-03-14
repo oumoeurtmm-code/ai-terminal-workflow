@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout ai-terminal-workflow
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           path: source
 
       - name: Checkout portfolio site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           repository: oumoeurtmm-code/oumoeurtmm-code.github.io
           token: ${{ secrets.PORTFOLIO_TOKEN }}
