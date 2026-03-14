@@ -1,0 +1,55 @@
+name: Sync Portfolio to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "projects/**/index.html"
+      - "projects/**/workflows/**"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ai-terminal-workflow
+        uses: actions/checkout@v4
+        with:
+          path: source
+
+      - name: Checkout portfolio site
+        uses: actions/checkout@v4
+        with:
+          repository: oumoeurtmm-code/oumoeurtmm-code.github.io
+          token: ${{ secrets.PORTFOLIO_TOKEN }}
+          path: portfolio
+
+      - name: Sync project pages
+        run: |
+          # Sync each project's index.html and any supporting files
+          for project_dir in source/projects/*/; do
+            project=$(basename "$project_dir")
+            if [ -f "$project_dir/index.html" ]; then
+              echo "Syncing $project..."
+              mkdir -p "portfolio/projects/$project"
+              cp "$project_dir/index.html" "portfolio/projects/$project/index.html"
+              # Sync workflows folder if present
+              if [ -d "$project_dir/workflows" ]; then
+                mkdir -p "portfolio/projects/$project/workflows"
+                cp -r "$project_dir/workflows/." "portfolio/projects/$project/workflows/"
+              fi
+            fi
+          done
+
+      - name: Commit and push if changed
+        run: |
+          cd portfolio
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to sync."
+          else
+            git commit -m "sync: update project pages from ai-terminal-workflow"
+            git push
+          fi

@@ -13,13 +13,22 @@ Hands-on AWS lab series built for **cloud engineering and certification prep** �
 
 ## Projects
 
-| # | Project | Stack | Status | Docs |
-|---|---------|-------|--------|------|
-| 01 | Static Website on AWS | S3 · CloudFront · IAM · CloudWatch | ✅ Complete | [README](aws-projects/01-static-website-aws-fundamentals/README.md) |
-| 02 | EC2 + VPC + Security Groups | EC2 · VPC · Subnets · SGs · SSM | 🔵 In Progress | [README](aws-projects/02-ec2-vpc-security-groups/README.md) |
-| 03 | RDS + EC2 Two-Tier App | RDS · EC2 · VPC · Secrets Manager | ⬜ Planned | — |
-| 04 | Lambda + API Gateway | Lambda · API GW · IAM · CloudWatch | ⬜ Planned | — |
-| 05 | Multi-Tier with ALB + Auto Scaling | ALB · ASG · CloudWatch · SNS | ⬜ Planned | — |
+### AWS Labs
+
+| # | Project | Stack | Status | Docs | Live |
+|---|---------|-------|--------|------|------|
+| 01 | Static Website on AWS | S3 · CloudFront · IAM · CloudWatch | ✅ Complete | [README](projects/01-static-website-aws-fundamentals/README.md) | [View](https://oumoeurtmm-code.github.io/projects/01-static-website-aws-fundamentals/) |
+| 02 | EC2 + VPC + Security Groups | EC2 · VPC · Subnets · SGs · SSM | 🔵 In Progress | [README](projects/02-ec2-vpc-security-groups/README.md) | — |
+| 03 | RDS + EC2 Two-Tier App | RDS · EC2 · VPC · Secrets Manager | ⬜ Planned | — | — |
+| 04 | Lambda + API Gateway | Lambda · API GW · IAM · CloudWatch | ⬜ Planned | — | — |
+| 05 | Multi-Tier with ALB + Auto Scaling | ALB · ASG · CloudWatch · SNS | ⬜ Planned | — | — |
+
+### Other Projects
+
+| Project | Stack | Status | Docs | Live |
+|---------|-------|--------|------|------|
+| n8n + OpenCode IT Automation | n8n · OpenCode · Claude Code · Okta · Entra | 🔵 Active | [README](projects/n8n-opencode-it-automation/README.md) | [View](https://oumoeurtmm-code.github.io/projects/n8n-opencode-it-automation/) |
+| Project Tracker | HTML · JS | ✅ Live | — | [View](https://oumoeurtmm-code.github.io/projects/project-tracker/) |
 
 ---
 
@@ -57,10 +66,10 @@ git clone https://github.com/oumoeurtmm-code/ai-terminal-workflow.git
 cd ai-terminal-workflow
 
 # Deploy a lab (example: project 01)
-bash aws-projects/01-static-website-aws-fundamentals/scripts/deploy.sh
+bash projects/01-static-website-aws-fundamentals/scripts/deploy.sh
 
 # Always clean up after your session
-bash aws-projects/01-static-website-aws-fundamentals/scripts/cleanup.sh
+bash projects/01-static-website-aws-fundamentals/scripts/cleanup.sh
 ```
 
 ---
@@ -102,24 +111,29 @@ aws resourcegroupstaggingapi get-resources \
 
 ```
 ai-terminal-workflow/
-├── aws-projects/
+├── projects/
 │   ├── 01-static-website-aws-fundamentals/
 │   │   ├── README.md          # Full walkthrough + exam notes
+│   │   ├── index.html         # Live portfolio page (synced to .github.io)
 │   │   ├── scripts/
 │   │   │   ├── deploy.sh
 │   │   │   └── cleanup.sh
 │   │   ├── website/           # Static site source files
-│   │   └── docs/screenshots/  # Console screenshots from lab run
-│   └── 02-ec2-vpc-security-groups/
-│       ├── README.md
-│       ├── scripts/
-│       │   ├── deploy.sh
-│       │   └── cleanup.sh
-│       └── docs/screenshots/
+│   │   └── docs/screenshots/
+│   ├── 02-ec2-vpc-security-groups/
+│   │   ├── README.md
+│   │   └── scripts/
+│   ├── n8n-opencode-it-automation/
+│   │   ├── index.html         # Live portfolio page (synced to .github.io)
+│   │   └── workflows/         # n8n workflow JSON exports
+│   └── project-tracker/
+│       └── index.html         # Live tracker (synced to .github.io)
 ├── finops-projects/           # FinOps study notes and reference material
 ├── security-projects/         # (planned)
 └── brain-dump/                # Working notes and ideas
 ```
+
+> Project pages (`index.html`) are automatically synced to [oumoeurtmm-code.github.io](https://oumoeurtmm-code.github.io) via GitHub Actions on every push.
 
 ---
 
