@@ -99,7 +99,7 @@ def lambda_handler(event, context):
         }
 PYEOF
 
-cd /tmp && zip -q function.zip handler.py && cd - > /dev/null
+python3 -c "import zipfile; z=zipfile.ZipFile('/tmp/function.zip','w'); z.write('/tmp/handler.py','handler.py'); z.close()"
 echo "  Packaged → /tmp/function.zip"
 
 echo "▶ Deploying Lambda function: $FUNCTION_NAME..."
