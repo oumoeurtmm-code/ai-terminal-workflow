@@ -20,7 +20,7 @@ Hands-on AWS lab series built for **cloud engineering and certification prep** �
 | 01 | Static Website on AWS | S3 · CloudFront · IAM · CloudWatch | ✅ Complete | [README](projects/01-static-website-aws-fundamentals/README.md) | [View](https://oumoeurtmm-code.github.io/projects/01-static-website-aws-fundamentals/) |
 | 02 | EC2 + VPC + Security Groups | EC2 · VPC · Subnets · SGs · SSM | ✅ Complete | [README](projects/02-ec2-vpc-security-groups/README.md) | [View](https://oumoeurtmm-code.github.io/projects/02-ec2-vpc-security-groups/) |
 | 03 | RDS + EC2 Two-Tier App | RDS · EC2 · VPC · Secrets Manager | ✅ Complete | [README](projects/03-rds-ec2-two-tier/README.md) | [View](https://oumoeurtmm-code.github.io/projects/03-rds-ec2-two-tier/) |
-| 04 | Lambda + API Gateway | Lambda · API GW · IAM · CloudWatch | ⬜ Planned | [README](projects/04-lambda-api-gateway/README.md) | [View](https://oumoeurtmm-code.github.io/projects/04-lambda-api-gateway/) |
+| 04 | Lambda + API Gateway | Lambda · API GW · IAM · CloudWatch | ✅ Complete | [README](projects/04-lambda-api-gateway/README.md) | [View](https://oumoeurtmm-code.github.io/projects/04-lambda-api-gateway/) |
 | 05 | Multi-Tier with ALB + Auto Scaling | ALB · ASG · CloudWatch · SNS | ⬜ Planned | — | — |
 
 ### Other Projects
