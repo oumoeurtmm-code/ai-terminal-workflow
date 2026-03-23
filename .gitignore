@@ -1,0 +1,46 @@
+# Environment and secrets
+.env
+.env.local
+.env.project
+*.env
+
+# AWS credentials
+.aws/credentials
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+*.zip
+*.tar.gz
+
+# Terraform (for future labs)
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan

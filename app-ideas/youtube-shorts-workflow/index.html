@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Shorts AI Workflow</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #333;
+    --accent: #ff0000;
+    --accent2: #ff4444;
+    --text: #e8e8e8;
+    --muted: #888;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --blue: #3b82f6;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* API Key Banner */
+  #api-banner {
+    background: #1a1000;
+    border-bottom: 1px solid #554400;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  #api-banner input {
+    flex: 1;
+    max-width: 380px;
+    background: #111;
+    border: 1px solid #554400;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: monospace;
+  }
+  #api-banner button {
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #api-status { font-size: 12px; }
+  #api-status.ok { color: var(--green); }
+  #api-status.err { color: var(--accent2); }
+
+  header {
+    padding: 20px 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  header h1 span { color: var(--accent); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; }
+  .tab-btn {
+    padding: 10px 22px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: #fff; border-bottom-color: var(--accent); }
+
+  .tab-pane { display: none; padding: 24px; max-width: 860px; }
+  .tab-pane.active { display: block; }
+
+  /* Form elements */
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; margin-top: 14px; }
+  input[type=text], textarea, select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color .15s;
+  }
+  input[type=text]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  select option { background: var(--surface2); }
+
+  .row { display: flex; gap: 12px; }
+  .row > * { flex: 1; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: #000; }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  /* Output box */
+  .output-box {
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    min-height: 80px;
+    color: var(--text);
+    display: none;
+    position: relative;
+  }
+  .output-box.visible { display: block; }
+  .output-box .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .output-box .copy-btn:hover { color: var(--text); }
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Section headers */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .section-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+  /* Growth tracker */
+  .tracker-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .stat-val {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    display: block;
+  }
+  .stat-card .stat-label { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  .add-video-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .add-video-form h3 { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+
+  .video-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .video-table th {
+    text-align: left;
+    padding: 8px 10px;
+    color: var(--muted);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .video-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .video-table tr:hover td { background: var(--surface); }
+  .video-table input[type=number] {
+    width: 90px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-live { background: #14532d; color: #4ade80; }
+  .badge-draft { background: #1e293b; color: #93c5fd; }
+  .badge-planned { background: #2d1e00; color: #fbbf24; }
+
+  /* Checklist */
+  .checklist-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .check-item:hover { border-color: #555; }
+  .check-item.checked { border-color: var(--green); background: #0a1f0a; }
+  .check-item input[type=checkbox] { margin-top: 2px; accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .check-item label { cursor: pointer; font-size: 13.5px; line-height: 1.4; }
+  .check-item label strong { color: #fff; }
+  .check-item label span { color: var(--muted); font-size: 12px; }
+  .check-item.checked label strong { color: var(--green); }
+
+  .score-bar-wrap { margin-top: 8px; background: var(--surface2); border-radius: 4px; height: 8px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 4px; transition: width .4s, background .4s; }
+
+  .formula-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 0;
+  }
+  .formula-step {
+    flex: 1;
+    text-align: center;
+    padding: 0 12px;
+    border-right: 1px solid var(--border);
+  }
+  .formula-step:last-child { border-right: none; }
+  .formula-step .fs-icon { font-size: 22px; margin-bottom: 4px; }
+  .formula-step .fs-title { font-size: 13px; font-weight: 700; color: #fff; }
+  .formula-step .fs-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  @media (max-width: 600px) {
+    .tracker-stats { grid-template-columns: 1fr; }
+    .row { flex-direction: column; }
+    .tab-btn { padding: 10px 12px; font-size: 13px; }
+    .formula-box { flex-direction: column; gap: 10px; }
+    .formula-step { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .formula-step:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- API Key Banner -->
+<div id="api-banner">
+  <span style="color:var(--muted)">🔑 Claude API Key:</span>
+  <input type="password" id="api-key-input" placeholder="sk-ant-..." />
+  <button onclick="saveKey()">Save</button>
+  <span id="api-status"></span>
+  <span style="margin-left:auto;color:var(--muted);font-size:11px">Stored locally in your browser only</span>
+</div>
+
+<header>
+  <h1>▶ YouTube Shorts <span>AI</span> Workflow</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('script')">✍️ Script Writer</button>
+    <button class="tab-btn" onclick="switchTab('content')">⚡ Content Generator</button>
+    <button class="tab-btn" onclick="switchTab('tracker')">📈 Growth Tracker</button>
+    <button class="tab-btn" onclick="switchTab('checklist')">✅ Upload Checklist</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════ TAB 1: Script Writer -->
+<div id="tab-script" class="tab-pane active">
+  <div class="section-title">Script Writer</div>
+  <div class="section-sub">Build scripts using the Hook → Body → Reward formula.</div>
+
+  <div class="formula-box">
+    <div class="formula-step">
+      <div class="fs-icon">🎣</div>
+      <div class="fs-title">HOOK</div>
+      <div class="fs-desc">First 1–3 sec.<br>Stop the scroll.</div>
+    </div>
+    <div class="formula-step">
+      <div class="fs-icon">📦</div>
+      <div class="fs-title">BODY</div>
+      <div class="fs-desc">Deliver the value.<br>Fast, punchy, clear.</div>
+    </div>
+    <div class="formula-step">
+      <div class="fs-icon">🎁</div>
+      <div class="fs-title">REWARD</div>
+      <div class="fs-desc">Payoff + CTA.<br>Make them stay.</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Niche / Topic</label>
+      <input type="text" id="sw-niche" placeholder="e.g. AWS cost savings, FinOps, cloud career" />
+    </div>
+    <div>
+      <label>Tone</label>
+      <select id="sw-tone">
+        <option>Conversational</option>
+        <option>Educational</option>
+        <option>Shocking / Bold</option>
+        <option>Storytelling</option>
+        <option>List / Tips</option>
+        <option>Motivational</option>
+      </select>
+    </div>
+  </div>
+
+  <label>Main idea or angle <span style="color:var(--muted)">(optional — leave blank for AI to choose)</span></label>
+  <textarea id="sw-idea" rows="2" placeholder="e.g. Most engineers waste money on EC2 without realizing it..."></textarea>
+
+  <label>Target audience</label>
+  <input type="text" id="sw-audience" placeholder="e.g. Cloud engineers, startup founders, IT managers" />
+
+  <label>Desired length</label>
+  <select id="sw-length">
+    <option>15 seconds (~40 words)</option>
+    <option selected>30 seconds (~75 words)</option>
+    <option>45 seconds (~110 words)</option>
+    <option>60 seconds (~150 words)</option>
+  </select>
+
+  <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="generateScript()">
+      <span id="sw-spinner"></span>✨ Generate Script
+    </button>
+    <button class="btn btn-secondary" onclick="clearOutput('sw-output')">Clear</button>
+  </div>
+
+  <div id="sw-output" class="output-box">
+    <button class="copy-btn" onclick="copyOutput('sw-output')">Copy</button>
+    <div id="sw-output-text"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ TAB 2: Content Generator -->
+<div id="tab-content" class="tab-pane">
+  <div class="section-title">Content Generator</div>
+  <div class="section-sub">Full content package: titles, script, voiceover notes, CapCut tips, and AI image prompts.</div>
+
+  <label>Topic</label>
+  <input type="text" id="cg-topic" placeholder="e.g. 3 ways to cut your AWS bill in half" />
+
+  <div class="row">
+    <div>
+      <label>Format</label>
+      <select id="cg-format">
+        <option>Story (personal experience)</option>
+        <option>Fact / Did you know</option>
+        <option>Reddit-style (reaction)</option>
+        <option>Tutorial / How-to</option>
+        <option>List (Top N tips)</option>
+        <option>Myth vs Reality</option>
+        <option>Before & After</option>
+        <option>Hot take / Controversial</option>
+      </select>
+    </div>
+    <div>
+      <label>Virality style</label>
+      <select id="cg-virality">
+        <option>Curiosity gap (make them keep watching)</option>
+        <option>Shock value (surprising stat or fact)</option>
+        <option>Relatability (everyone feels this)</option>
+        <option>FOMO (they're missing out)</option>
+        <option>Authority (expert credibility)</option>
+        <option>Transformation (before → after)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Niche</label>
+      <input type="text" id="cg-niche" placeholder="e.g. FinOps, cloud engineering, AWS" />
+    </div>
+    <div>
+      <label>Include AI image prompts?</label>
+      <select id="cg-images">
+        <option value="yes">Yes — include Midjourney/DALL-E prompts</option>
+        <option value="no">No — skip image prompts</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="generateContent()">
+      <span id="cg-spinner"></span>⚡ Generate Full Package
+    </button>
+    <button class="btn btn-secondary" onclick="clearOutput('cg-output')">Clear</button>
+  </div>
+
+  <div id="cg-output" class="output-box">
+    <button class="copy-btn" onclick="copyOutput('cg-output')">Copy</button>
+    <div id="cg-output-text"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ TAB 3: Growth Tracker -->
+<div id="tab-tracker" class="tab-pane">
+  <div class="section-title">Growth Tracker</div>
+  <div class="section-sub">Log your Shorts and track running totals.</div>
+
+  <div class="tracker-stats">
+    <div class="stat-card">
+      <span class="stat-val" id="stat-videos">0</span>
+      <div class="stat-label">Videos Logged</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val" id="stat-views">0</span>
+      <div class="stat-label">Total Views</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val" id="stat-revenue">$0.00</span>
+      <div class="stat-label">Est. Revenue (Shorts RPM ~$0.04/1K)</div>
+    </div>
+  </div>
+
+  <div class="add-video-form">
+    <h3>+ Add / Update Video</h3>
+    <div class="row">
+      <div>
+        <label>Video title</label>
+        <input type="text" id="v-title" placeholder="e.g. 3 ways to cut your AWS bill" />
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="v-status">
+          <option value="live">Live</option>
+          <option value="draft">Draft</option>
+          <option value="planned">Planned</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Views</label>
+        <input type="text" id="v-views" placeholder="0" />
+      </div>
+      <div>
+        <label>Upload date</label>
+        <input type="text" id="v-date" placeholder="YYYY-MM-DD" />
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn btn-green" onclick="addVideo()">Add Video</button>
+    </div>
+  </div>
+
+  <table class="video-table" id="video-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Views</th>
+        <th>Est. Revenue</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="video-tbody"></tbody>
+  </table>
+  <div id="tracker-empty" style="text-align:center;padding:40px;color:var(--muted);font-size:14px">
+    No videos yet — add your first Short above.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ TAB 4: Upload Checklist -->
+<div id="tab-checklist" class="tab-pane">
+  <div class="section-title">Upload Checklist</div>
+  <div class="section-sub">17-point pre-upload checklist. Then get AI feedback on your readiness score.</div>
+
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+    <div style="flex:1">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Readiness: <span id="score-text">0 / 17</span></div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" id="score-bar" style="width:0%;background:var(--accent)"></div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="resetChecklist()">Reset</button>
+  </div>
+
+  <div class="checklist-grid" id="checklist-items"></div>
+
+  <label>Additional context for AI (optional)</label>
+  <textarea id="cl-context" rows="2" placeholder="e.g. This is a 45-sec tutorial about AWS Cost Explorer, targeting cloud engineers..."></textarea>
+
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="analyzeChecklist()">
+      <span id="cl-spinner"></span>🔍 Analyze & Get Tips
+    </button>
+    <button class="btn btn-secondary" onclick="clearOutput('cl-output')">Clear</button>
+  </div>
+
+  <div id="cl-output" class="output-box">
+    <button class="copy-btn" onclick="copyOutput('cl-output')">Copy</button>
+    <div id="cl-output-text"></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// API KEY
+// ─────────────────────────────────────────
+let API_KEY = localStorage.getItem('yt_claude_key') || '';
+const keyInput = document.getElementById('api-key-input');
+const apiStatus = document.getElementById('api-status');
+
+if (API_KEY) {
+  keyInput.value = API_KEY;
+  apiStatus.textContent = '✓ Key loaded';
+  apiStatus.className = 'ok';
+}
+
+function saveKey() {
+  const val = keyInput.value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    apiStatus.textContent = '✗ Key should start with sk-ant-';
+    apiStatus.className = 'err';
+    return;
+  }
+  API_KEY = val;
+  localStorage.setItem('yt_claude_key', val);
+  apiStatus.textContent = '✓ Saved';
+  apiStatus.className = 'ok';
+}
+
+async function callClaude(prompt) {
+  if (!API_KEY) throw new Error('No API key set — enter your Claude API key at the top.');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+// ─────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ─────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────
+function showOutput(id, text) {
+  const box = document.getElementById(id);
+  const textEl = document.getElementById(id + '-text');
+  box.classList.add('visible');
+  textEl.textContent = text;
+}
+function clearOutput(id) {
+  const box = document.getElementById(id);
+  box.classList.remove('visible');
+}
+function copyOutput(id) {
+  const text = document.getElementById(id + '-text').textContent;
+  navigator.clipboard.writeText(text).catch(() => {});
+  const btn = document.querySelector(`#${id} .copy-btn`);
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 1500);
+}
+function setSpinner(id, on) {
+  const el = document.getElementById(id);
+  el.innerHTML = on ? '<span class="spinner"></span>' : '';
+}
+async function runAI(spinnerId, btnFn, promptFn, outputId) {
+  const btn = document.querySelector(`[onclick="${btnFn}()"]`);
+  if (btn) btn.disabled = true;
+  setSpinner(spinnerId, true);
+  try {
+    const prompt = promptFn();
+    const result = await callClaude(prompt);
+    showOutput(outputId, result);
+  } catch (e) {
+    showOutput(outputId, '⚠ Error: ' + e.message);
+  } finally {
+    setSpinner(spinnerId, false);
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────
+// TAB 1: SCRIPT WRITER
+// ─────────────────────────────────────────
+async function generateScript() {
+  const btn = document.querySelector('[onclick="generateScript()"]');
+  btn.disabled = true;
+  setSpinner('sw-spinner', true);
+  try {
+    const niche = document.getElementById('sw-niche').value.trim() || 'general';
+    const tone = document.getElementById('sw-tone').value;
+    const idea = document.getElementById('sw-idea').value.trim();
+    const audience = document.getElementById('sw-audience').value.trim() || 'general audience';
+    const length = document.getElementById('sw-length').value;
+
+    const prompt = `You are a YouTube Shorts scriptwriter. Write a high-performing short-form video script using the Hook → Body → Reward formula.
+
+INPUTS:
+- Niche/Topic: ${niche}
+- Tone: ${tone}
+- Main idea: ${idea || '(choose the most compelling angle for this niche)'}
+- Target audience: ${audience}
+- Target length: ${length}
+
+FORMAT YOUR OUTPUT EXACTLY LIKE THIS:
+
+🎣 HOOK (first 1–3 seconds)
+[Write the hook here — must stop the scroll immediately]
+
+📦 BODY
+[Write the body here — deliver value fast, line by line for easy reading on screen]
+
+🎁 REWARD + CTA
+[Write the payoff and call to action here]
+
+---
+💡 DIRECTOR NOTES
+[2–3 tips on delivery, pacing, or visuals that will help this script perform well]
+
+Keep the total word count appropriate for ${length}. Use natural spoken language, short sentences, and punchy delivery.`;
+
+    const result = await callClaude(prompt);
+    showOutput('sw-output', result);
+  } catch (e) {
+    showOutput('sw-output', '⚠ Error: ' + e.message);
+  } finally {
+    setSpinner('sw-spinner', false);
+    btn.disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────
+// TAB 2: CONTENT GENERATOR
+// ─────────────────────────────────────────
+async function generateContent() {
+  const btn = document.querySelector('[onclick="generateContent()"]');
+  btn.disabled = true;
+  setSpinner('cg-spinner', true);
+  try {
+    const topic = document.getElementById('cg-topic').value.trim() || 'a compelling cloud/tech topic';
+    const format = document.getElementById('cg-format').value;
+    const virality = document.getElementById('cg-virality').value;
+    const niche = document.getElementById('cg-niche').value.trim() || 'tech/cloud';
+    const includeImages = document.getElementById('cg-images').value === 'yes';
+
+    const prompt = `You are a viral YouTube Shorts content strategist. Create a complete content package for a Short.
+
+INPUTS:
+- Topic: ${topic}
+- Format: ${format}
+- Virality style: ${virality}
+- Niche: ${niche}
+
+OUTPUT THE FOLLOWING SECTIONS:
+
+📌 TITLE OPTIONS (give 3 title variations, each under 60 chars)
+1. [title]
+2. [title]
+3. [title]
+
+🎬 FULL SCRIPT (30–45 seconds, using Hook → Body → Reward)
+[full spoken script]
+
+🎙 VOICEOVER NOTES
+[pacing, emphasis, pauses, energy level tips]
+
+✂️ CAPCUT EDITING TIPS
+[3–5 specific CapCut techniques: text animations, cuts, effects, music mood]
+
+${includeImages ? `🖼 AI IMAGE PROMPTS (for b-roll or thumbnails)
+Prompt 1: [detailed Midjourney/DALL-E prompt]
+Prompt 2: [detailed Midjourney/DALL-E prompt]` : ''}
+
+📊 PERFORMANCE PREDICTION
+[1–2 sentences on why this specific combination of format + virality style should work, and what to A/B test]`;
+
+    const result = await callClaude(prompt);
+    showOutput('cg-output', result);
+  } catch (e) {
+    showOutput('cg-output', '⚠ Error: ' + e.message);
+  } finally {
+    setSpinner('cg-spinner', false);
+    btn.disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────
+// TAB 3: GROWTH TRACKER
+// ─────────────────────────────────────────
+let videos = JSON.parse(localStorage.getItem('yt_videos') || '[]');
+
+function saveVideos() {
+  localStorage.setItem('yt_videos', JSON.stringify(videos));
+}
+
+function formatNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toString();
+}
+
+function renderTracker() {
+  const tbody = document.getElementById('video-tbody');
+  const empty = document.getElementById('tracker-empty');
+
+  const totalViews = videos.reduce((s, v) => s + (parseInt(v.views) || 0), 0);
+  const totalRevenue = (totalViews / 1000) * 0.04;
+
+  document.getElementById('stat-videos').textContent = videos.length;
+  document.getElementById('stat-views').textContent = formatNum(totalViews);
+  document.getElementById('stat-revenue').textContent = '$' + totalRevenue.toFixed(2);
+
+  if (videos.length === 0) {
+    empty.style.display = 'block';
+    tbody.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = videos.map((v, i) => {
+    const views = parseInt(v.views) || 0;
+    const rev = ((views / 1000) * 0.04).toFixed(2);
+    const badgeClass = v.status === 'live' ? 'badge-live' : v.status === 'draft' ? 'badge-draft' : 'badge-planned';
+    return `<tr>
+      <td style="color:var(--muted)">${i + 1}</td>
+      <td>${escHtml(v.title)}</td>
+      <td style="color:var(--muted)">${escHtml(v.date || '—')}</td>
+      <td>${formatNum(views)}</td>
+      <td style="color:var(--green)">$${rev}</td>
+      <td><span class="badge ${badgeClass}">${v.status}</span></td>
+      <td><button class="btn btn-secondary btn-sm" onclick="deleteVideo(${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function addVideo() {
+  const title = document.getElementById('v-title').value.trim();
+  if (!title) { alert('Please enter a video title.'); return; }
+  videos.push({
+    title,
+    status: document.getElementById('v-status').value,
+    views: document.getElementById('v-views').value || '0',
+    date: document.getElementById('v-date').value || new Date().toISOString().slice(0,10)
+  });
+  saveVideos();
+  renderTracker();
+  document.getElementById('v-title').value = '';
+  document.getElementById('v-views').value = '';
+  document.getElementById('v-date').value = '';
+}
+
+function deleteVideo(i) {
+  videos.splice(i, 1);
+  saveVideos();
+  renderTracker();
+}
+
+renderTracker();
+
+// ─────────────────────────────────────────
+// TAB 4: UPLOAD CHECKLIST
+// ─────────────────────────────────────────
+const CHECKLIST_ITEMS = [
+  { id: 'c01', label: '<strong>Hook lands in 1–3 seconds</strong>', desc: 'First frame stops the scroll — no slow intros' },
+  { id: 'c02', label: '<strong>Title includes a keyword</strong>', desc: 'Use words people actually search (e.g. "AWS cost", "FinOps tips")' },
+  { id: 'c03', label: '<strong>Thumbnail is eye-catching at small size</strong>', desc: 'Clear face or bold text — readable as a tiny square' },
+  { id: 'c04', label: '<strong>Script delivers value within 5 seconds</strong>', desc: 'Don\'t tease too long — get to the point fast' },
+  { id: 'c05', label: '<strong>Video is under 60 seconds</strong>', desc: 'Ideal length for Shorts algorithm push' },
+  { id: 'c06', label: '<strong>Vertical 9:16 format (1080×1920)</strong>', desc: 'Required for YouTube Shorts feed' },
+  { id: 'c07', label: '<strong>Captions / subtitles added</strong>', desc: '80%+ of viewers watch without sound' },
+  { id: 'c08', label: '<strong>Audio is clear — no background noise</strong>', desc: 'Use noise reduction in CapCut or Audacity if needed' },
+  { id: 'c09', label: '<strong>Lighting is even, face is visible</strong>', desc: 'Natural light or ring light, no harsh shadows' },
+  { id: 'c10', label: '<strong>Clear CTA at the end</strong>', desc: '"Follow for more", "Comment X if you want Y", or "Link in bio"' },
+  { id: 'c11', label: '<strong>No copyrighted music used</strong>', desc: 'Use YouTube\'s free audio library or royalty-free tracks' },
+  { id: 'c12', label: '<strong>Description written (2–3 sentences + hashtags)</strong>', desc: 'Include 3–5 relevant hashtags + #Shorts' },
+  { id: 'c13', label: '<strong>Hashtags include #Shorts</strong>', desc: '#Shorts tells YouTube to distribute in the Shorts feed' },
+  { id: 'c14', label: '<strong>Category and audience settings configured</strong>', desc: 'Set "Made for Kids" correctly; pick the right category' },
+  { id: 'c15', label: '<strong>End screen or pinned comment set up</strong>', desc: 'Pinned comment with CTA extends engagement window' },
+  { id: 'c16', label: '<strong>Scheduled at peak time for your audience</strong>', desc: 'Typically Tue–Thu, 12pm–3pm or 7pm–9pm local audience time' },
+  { id: 'c17', label: '<strong>Watch through once before publishing</strong>', desc: 'Final check: no jump cuts, no audio glitches, CTA clear' },
+];
+
+let checkState = JSON.parse(localStorage.getItem('yt_checklist') || '{}');
+
+function renderChecklist() {
+  const container = document.getElementById('checklist-items');
+  container.innerHTML = CHECKLIST_ITEMS.map(item => {
+    const checked = !!checkState[item.id];
+    return `<div class="check-item ${checked ? 'checked' : ''}" onclick="toggleCheck('${item.id}', event)">
+      <input type="checkbox" id="${item.id}" ${checked ? 'checked' : ''} onclick="event.stopPropagation();toggleCheck('${item.id}', event)">
+      <label for="${item.id}">${item.label}<br><span>${item.desc}</span></label>
+    </div>`;
+  }).join('');
+  updateScore();
+}
+
+function toggleCheck(id, event) {
+  checkState[id] = !checkState[id];
+  localStorage.setItem('yt_checklist', JSON.stringify(checkState));
+  renderChecklist();
+}
+
+function updateScore() {
+  const done = Object.values(checkState).filter(Boolean).length;
+  const total = CHECKLIST_ITEMS.length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('score-text').textContent = `${done} / ${total}`;
+  const bar = document.getElementById('score-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--accent)';
+}
+
+function resetChecklist() {
+  checkState = {};
+  localStorage.setItem('yt_checklist', '{}');
+  renderChecklist();
+}
+
+async function analyzeChecklist() {
+  const btn = document.querySelector('[onclick="analyzeChecklist()"]');
+  btn.disabled = true;
+  setSpinner('cl-spinner', true);
+  try {
+    const done = CHECKLIST_ITEMS.filter(i => checkState[i.id]).map(i => i.label.replace(/<[^>]+>/g,''));
+    const missing = CHECKLIST_ITEMS.filter(i => !checkState[i.id]).map(i => i.label.replace(/<[^>]+>/g,''));
+    const context = document.getElementById('cl-context').value.trim();
+    const pct = Math.round((done.length / CHECKLIST_ITEMS.length) * 100);
+
+    const prompt = `You are a YouTube Shorts optimization expert. A creator is about to upload a Short.
+
+READINESS SCORE: ${done.length} / ${CHECKLIST_ITEMS.length} (${pct}%)
+
+COMPLETED ITEMS:
+${done.length ? done.map(d => '✓ ' + d).join('\n') : '(none)'}
+
+MISSING ITEMS:
+${missing.length ? missing.map(m => '✗ ' + m).join('\n') : '(all done — perfect!)'}
+
+${context ? `ADDITIONAL CONTEXT:\n${context}` : ''}
+
+Please provide:
+
+1. READINESS VERDICT
+   One sentence on whether this video is ready to publish.
+
+2. TOP 3 CRITICAL FIXES (if any)
+   For each missing item that matters most, explain WHY it kills performance and give one specific fix.
+
+3. STRENGTHS
+   Call out 2–3 items they did right and what impact that has.
+
+4. ONE BONUS TIP
+   Something not on the checklist that could boost this specific Short's performance.
+
+Keep it practical and direct — no fluff.`;
+
+    const result = await callClaude(prompt);
+    showOutput('cl-output', result);
+  } catch (e) {
+    showOutput('cl-output', '⚠ Error: ' + e.message);
+  } finally {
+    setSpinner('cl-spinner', false);
+    btn.disabled = false;
+  }
+}
+
+renderChecklist();
+</script>
+</body>
+</html>

@@ -21,13 +21,22 @@ Hands-on AWS lab series built for **cloud engineering and certification prep** �
 | 02 | EC2 + VPC + Security Groups | EC2 · VPC · Subnets · SGs · SSM | ✅ Complete | [README](projects/02-ec2-vpc-security-groups/README.md) | [View](https://oumoeurtmm-code.github.io/projects/02-ec2-vpc-security-groups/) |
 | 03 | RDS + EC2 Two-Tier App | RDS · EC2 · VPC · Secrets Manager | ✅ Complete | [README](projects/03-rds-ec2-two-tier/README.md) | [View](https://oumoeurtmm-code.github.io/projects/03-rds-ec2-two-tier/) |
 | 04 | Lambda + API Gateway | Lambda · API GW · IAM · CloudWatch | ✅ Complete | [README](projects/04-lambda-api-gateway/README.md) | [View](https://oumoeurtmm-code.github.io/projects/04-lambda-api-gateway/) |
-| 05 | Multi-Tier with ALB + Auto Scaling | ALB · ASG · CloudWatch · SNS | ⬜ Planned | — | — |
+| 05 | Multi-Tier with ALB + Auto Scaling | ALB · ASG · CloudWatch · SNS · FinOps | 🔵 In Progress | [README](projects/05-multi-tier-alb-autoscaling/README.md) | — |
+
+### FinOps Projects
+
+Hands-on cost engineering projects that integrate with the AWS labs — especially Lab 05.
+
+| Project | Stack | Status | Docs |
+|---------|-------|--------|------|
+| AWS Cost Explorer Dashboard | Cost Explorer API · Python · boto3 | 🔵 In Progress | [README](finops-projects/aws-cost-explorer-dashboard/README.md) |
+| Budget Alerts & Anomaly Detection | AWS Budgets · Cost Anomaly Detection · SNS | 🔵 In Progress | [README](finops-projects/budget-alerts-anomaly-detection/README.md) |
 
 ### Other Projects
 
 | Project | Stack | Status | Docs | Live |
 |---------|-------|--------|------|------|
-| n8n + OpenCode IT Automation | n8n · OpenCode · Claude Code · Okta · Entra | 🔵 Active | [README](projects/n8n-opencode-it-automation/README.md) | [View](https://oumoeurtmm-code.github.io/projects/n8n-opencode-it-automation/) |
+| n8n + OpenCode IT Automation | n8n · OpenCode · Claude Code · Okta · Entra | ✅ Complete | [README](projects/n8n-opencode-it-automation/README.md) | [View](https://oumoeurtmm-code.github.io/projects/n8n-opencode-it-automation/) |
 | Project Tracker | HTML · JS | ✅ Live | — | [View](https://oumoeurtmm-code.github.io/projects/project-tracker/) |
 
 ---
@@ -112,25 +121,33 @@ aws resourcegroupstaggingapi get-resources \
 ```
 ai-terminal-workflow/
 ├── projects/
-│   ├── 01-static-website-aws-fundamentals/
-│   │   ├── README.md          # Full walkthrough + exam notes
-│   │   ├── index.html         # Live portfolio page (synced to .github.io)
+│   ├── 01-static-website-aws-fundamentals/   # S3 · CloudFront · IAM · CloudWatch
+│   ├── 02-ec2-vpc-security-groups/           # EC2 · VPC · Subnets · SSM
+│   ├── 03-rds-ec2-two-tier/                  # RDS · EC2 · Secrets Manager
+│   ├── 04-lambda-api-gateway/                # Lambda · API GW · CloudWatch
+│   ├── 05-multi-tier-alb-autoscaling/        # ALB · ASG · CloudWatch · FinOps
+│   │   ├── README.md
 │   │   ├── scripts/
 │   │   │   ├── deploy.sh
-│   │   │   └── cleanup.sh
-│   │   ├── website/           # Static site source files
-│   │   └── docs/screenshots/
-│   ├── 02-ec2-vpc-security-groups/
-│   │   ├── README.md
-│   │   └── scripts/
-│   ├── n8n-opencode-it-automation/
-│   │   ├── index.html         # Live portfolio page (synced to .github.io)
-│   │   └── workflows/         # n8n workflow JSON exports
+│   │   │   ├── cleanup.sh
+│   │   │   ├── test-scaling.sh
+│   │   │   └── finops-check.sh
+│   │   └── docs/gifs/
+│   ├── n8n-opencode-it-automation/           # n8n · Claude · Okta · Entra
+│   │   ├── workflows/                        # n8n JSON exports
+│   │   ├── scripts/                          # Python demo scripts
+│   │   └── docs/gifs/
 │   └── project-tracker/
-│       └── index.html         # Live tracker (synced to .github.io)
-├── finops-projects/           # FinOps study notes and reference material
-├── security-projects/         # (planned)
-└── brain-dump/                # Working notes and ideas
+├── finops-projects/
+│   ├── aws-cost-explorer-dashboard/          # Cost Explorer API + Python viz
+│   ├── budget-alerts-anomaly-detection/      # AWS Budgets + Anomaly Detection
+│   ├── overview/
+│   ├── best_practices/
+│   ├── cost_optimization/
+│   └── open_source_tools/
+├── security-projects/                        # (planned)
+├── app-ideas/                                # Real Estate Analyzer (planned)
+└── brain-dump/                               # Working notes
 ```
 
 > Project pages (`index.html`) are automatically synced to [oumoeurtmm-code.github.io](https://oumoeurtmm-code.github.io) via GitHub Actions on every push.

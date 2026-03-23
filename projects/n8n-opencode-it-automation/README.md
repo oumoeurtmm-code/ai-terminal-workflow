@@ -1,6 +1,6 @@
 # n8n + OpenCode IT Automation
 
-![Status](https://img.shields.io/badge/status-active-brightgreen?style=flat)
+![Status](https://img.shields.io/badge/status-complete-brightgreen?style=flat)
 ![Stack](https://img.shields.io/badge/stack-n8n_%C2%B7_OpenCode_%C2%B7_Okta_%C2%B7_Entra-6366f1?style=flat)
 ![AI](https://img.shields.io/badge/AI-Claude_Code_%C2%B7_Gemini_%C2%B7_Grok_%C2%B7_Perplexity-22d3ee?style=flat)
 
@@ -98,6 +98,7 @@ In your n8n instance, add the following credentials:
 Set these as **n8n Variables** (Settings → Variables) so they're available across all workflows:
 
 ```
+ANTHROPIC_API_KEY   sk-ant-...          # Required — used by workflow HTTP nodes
 OPENCODE_URL        https://your-opencode-instance
 OPENCODE_API_KEY    your-opencode-api-key
 OKTA_DOMAIN         your-org.okta.com
@@ -108,6 +109,8 @@ SLACK_CHANNEL_ALERTS #it-alerts
 SLACK_CHANNEL_APPROVAL #it-approvals
 ```
 
+> The workflow JSON exports reference `{{ $vars.ANTHROPIC_API_KEY }}` — set this variable in n8n before activating any workflow.
+
 ### 3. Import workflows
 
 In n8n: **Workflows → Import from file**
@@ -116,8 +119,7 @@ In n8n: **Workflows → Import from file**
 |---|---|
 | `workflows/new-hire-provisioning.json` | New Hire Provisioning |
 | `workflows/access-request.json` | Access Request Decision |
-
-> Workflow 3 (Ops Monitoring) is configured inline via the Schedule Trigger node — no separate import needed.
+| `workflows/cloud-cost-report.json` | Cloud Cost Report — Weekly AI Summary |
 
 ### 4. Activate and test
 
@@ -142,15 +144,49 @@ curl -X POST https://your-n8n-instance/webhook/new-hire \
 
 ---
 
+## Python Demo Scripts
+
+Don't have a full n8n + Okta + Entra stack running locally? The `scripts/` directory contains standalone Python scripts that demonstrate each workflow using the Anthropic API directly — no n8n required.
+
+```bash
+cd scripts
+pip install -r requirements.txt
+export ANTHROPIC_API_KEY=your-key
+
+# Run all 3 workflows in sequence
+python run_demo.py
+
+# Or run individually
+python new_hire_provisioning.py
+python access_request.py
+python cloud_cost_report.py
+```
+
+See [`scripts/README.md`](scripts/README.md) for full usage details.
+
+---
+
 ## Project Structure
 
 ```
 n8n-opencode-it-automation/
 ├── index.html                        # Live project page (synced to portfolio)
 ├── README.md                         # This file
-└── workflows/
-    ├── new-hire-provisioning.json    # Workflow 1 — n8n export
-    └── access-request.json           # Workflow 2 — n8n export
+├── setup.md                          # Docker quickstart guide
+├── docker-compose.yml                # Self-hosted n8n deployment
+├── .env.example                      # Environment variable template
+├── scripts/
+│   ├── README.md                     # Script usage guide
+│   ├── requirements.txt              # Python dependencies
+│   ├── new_hire_provisioning.py      # Workflow 1 demo (Python)
+│   ├── access_request.py             # Workflow 2 demo (Python)
+│   ├── cloud_cost_report.py          # Workflow 3 demo (Python)
+│   └── run_demo.py                   # Run all 3 in sequence
+├── workflows/
+│   ├── new-hire-provisioning.json    # Workflow 1 — n8n export
+│   ├── access-request.json           # Workflow 2 — n8n export
+│   └── cloud-cost-report.json        # Workflow 3 — n8n export
+└── docs/gifs/                        # Demo recordings
 ```
 
 ---
