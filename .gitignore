@@ -1,3 +1,7 @@
+# Private directories — local only, never pushed
+app-ideas/
+brain-dump/
+
 # Environment and secrets
 .env
 .env.local
