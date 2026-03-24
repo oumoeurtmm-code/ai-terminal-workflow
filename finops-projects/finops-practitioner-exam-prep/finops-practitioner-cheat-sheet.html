@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinOps Practitioner (FOCP) — Exam Cheat Sheet</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --card: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --blue: #58a6ff;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --orange: #db6d28;
+      --purple: #a371f7;
+      --teal: #39d353;
+      --red: #f85149;
+      --cyan: #76e3ea;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 0 0 60px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d2d6e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 40px 36px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #58a6ff, #39d353);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    .page-header p { color: var(--muted); font-size: 1rem; margin-bottom: 20px; }
+    .exam-badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .exam-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .exam-badge.blue  { border-color: var(--blue);   color: var(--blue); }
+    .exam-badge.green { border-color: var(--green);  color: var(--green); }
+    .exam-badge.yellow{ border-color: var(--yellow); color: var(--yellow); }
+    .exam-badge.orange{ border-color: var(--orange); color: var(--orange); }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section { margin: 40px 0; }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media(max-width:768px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th { background: var(--surface); color: var(--blue); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); }
+    td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+
+    /* ── Lifecycle Diagram ── */
+    .lifecycle {
+      display: grid;
+      grid-template-columns: 1fr 48px 1fr 48px 1fr;
+      align-items: center;
+      gap: 0;
+      margin: 24px 0;
+    }
+    .phase {
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+      position: relative;
+    }
+    .phase-inform  { background: linear-gradient(135deg, #0d2d6e22, #58a6ff22); border: 1px solid #58a6ff55; }
+    .phase-optimize{ background: linear-gradient(135deg, #0a2d1a22, #3fb95022); border: 1px solid #3fb95055; }
+    .phase-operate { background: linear-gradient(135deg, #2d1b0022, #d2992222); border: 1px solid #d2992255; }
+    .phase-icon { font-size: 2rem; margin-bottom: 8px; }
+    .phase-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+    .phase-inform  .phase-name { color: var(--blue); }
+    .phase-optimize .phase-name { color: var(--green); }
+    .phase-operate  .phase-name { color: var(--yellow); }
+    .phase-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+    .phase-keywords { display: flex; flex-direction: column; gap: 4px; }
+    .phase-kw { font-size: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 4px; padding: 3px 8px; }
+    .arrow { text-align: center; font-size: 1.8rem; color: var(--muted); }
+    .lifecycle-loop {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    /* ── Domain Cards ── */
+    .domain-card {
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .domain-num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; opacity: 0.6; text-transform: uppercase; margin-bottom: 4px; }
+    .domain-name { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+    .domain-caps { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .domain-cap { font-size: 0.8rem; padding: 5px 10px; border-radius: 5px; display: flex; align-items: center; gap: 6px; }
+    .domain-cap::before { content: "◆"; font-size: 0.5rem; flex-shrink: 0; }
+    .d1 .domain-name { color: #58a6ff; } .d1 .domain-cap { background: #58a6ff11; color: #8ec8ff; }
+    .d2 .domain-name { color: #3fb950; } .d2 .domain-cap { background: #3fb95011; color: #7dd99b; }
+    .d3 .domain-name { color: #a371f7; } .d3 .domain-cap { background: #a371f711; color: #c49fff; }
+    .d4 .domain-name { color: #db6d28; } .d4 .domain-cap { background: #db6d2811; color: #f0a070; }
+    .d5 .domain-name { color: #39d353; } .d5 .domain-cap { background: #39d35311; color: #7eeea0; }
+    .d6 .domain-name { color: #76e3ea; } .d6 .domain-cap { background: #76e3ea11; color: #a8edf0; }
+
+    /* ── Maturity Model ── */
+    .maturity-row { display: grid; grid-template-columns: 100px 1fr 1fr 1fr; gap: 1px; margin-bottom: 1px; }
+    .maturity-label { background: var(--surface); padding: 10px 12px; font-size: 0.78rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; border-radius: 6px 0 0 6px; }
+    .maturity-cell { padding: 10px 14px; font-size: 0.78rem; }
+    .crawl { background: #21262d; color: #8b949e; }
+    .walk  { background: #1f2d3d; color: #79c0ff; }
+    .run   { background: #1a2d1a; color: #56d364; }
+    .maturity-header .maturity-cell { font-weight: 700; font-size: 0.85rem; text-align: center; padding: 12px; border-radius: 0 6px 6px 0; }
+    .maturity-header .crawl { color: #8b949e; border-radius: 0; }
+    .maturity-header .walk  { color: #79c0ff; border-radius: 0; }
+    .maturity-header .run   { color: #56d364; border-radius: 0 6px 6px 0; }
+
+    /* ── Persona Cards ── */
+    .persona {
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .persona-role { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .persona-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .persona-goal { font-size: 0.78rem; padding: 4px 8px; border-radius: 4px; margin-bottom: 4px; }
+    .persona-pain { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── Commitment Comparison ── */
+    .commit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .commit-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .commit-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+    .commit-discount { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+    .commit-detail { font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+    .commit-badge { display: inline-block; font-size: 0.68rem; border-radius: 4px; padding: 2px 6px; margin-bottom: 8px; font-weight: 600; }
+
+    /* ── Tip boxes ── */
+    .tip {
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .tip.blue   { background: #58a6ff15; border: 1px solid #58a6ff40; }
+    .tip.green  { background: #3fb95015; border: 1px solid #3fb95040; }
+    .tip.yellow { background: #d2992215; border: 1px solid #d2992240; }
+    .tip.red    { background: #f8514915; border: 1px solid #f8514940; }
+    .tip strong { color: var(--text); }
+
+    /* ── Flashcard terms ── */
+    .terms-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .term { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; }
+    .term-word { font-weight: 700; font-size: 0.85rem; color: var(--blue); margin-bottom: 2px; }
+    .term-def  { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+
+    /* ── Exam tips ── */
+    .exam-tips { counter-reset: tip-counter; display: flex; flex-direction: column; gap: 10px; }
+    .exam-tip {
+      counter-increment: tip-counter;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px 14px 20px;
+      position: relative;
+    }
+    .exam-tip::before {
+      content: counter(tip-counter);
+      position: absolute;
+      left: -14px;
+      top: 50%; transform: translateY(-50%);
+      background: var(--blue);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.7rem;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .exam-tip-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; color: var(--blue); }
+    .exam-tip-body  { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── SVG Diagrams ── */
+    .diagram-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 16px 0; overflow-x: auto; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; color: black; }
+      .page-header { background: #f0f4ff; }
+      .card, .domain-card, .persona, .commit-card, .term, .exam-tip { background: #f9f9f9; border-color: #ddd; }
+      th { background: #eef; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════════ -->
+<div class="page-header">
+  <h1>FinOps Practitioner (FOCP)</h1>
+  <p>Complete Exam Cheat Sheet · All Domains · Diagrams · Tips</p>
+  <div class="exam-badges">
+    <span class="exam-badge blue">50 Questions</span>
+    <span class="exam-badge yellow">90 Minutes</span>
+    <span class="exam-badge green">75% to Pass (38/50)</span>
+    <span class="exam-badge orange">Open Book</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══ LIFECYCLE ════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">The FinOps Lifecycle — Most Tested Concept</div>
+
+  <div class="lifecycle">
+    <div class="phase phase-inform">
+      <div class="phase-icon">👁️</div>
+      <div class="phase-name">INFORM</div>
+      <div class="phase-desc">Build visibility before you can act</div>
+      <div class="phase-keywords">
+        <span class="phase-kw">Cost Allocation</span>
+        <span class="phase-kw">Tagging & Labeling</span>
+        <span class="phase-kw">Showback Reports</span>
+        <span class="phase-kw">Benchmarking</span>
+        <span class="phase-kw">Anomaly Detection</span>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="phase phase-optimize">
+      <div class="phase-icon">⚡</div>
+      <div class="phase-name">OPTIMIZE</div>
+      <div class="phase-desc">Act on what you see to reduce waste</div>
+      <div class="phase-keywords">
+        <span class="phase-kw">Rightsizing</span>
+        <span class="phase-kw">Reserved Instances</span>
+        <span class="phase-kw">Savings Plans</span>
+        <span class="phase-kw">Spot Instances</span>
+        <span class="phase-kw">Eliminate Idle</span>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="phase phase-operate">
+      <div class="phase-icon">⚙️</div>
+      <div class="phase-name">OPERATE</div>
+      <div class="phase-desc">Make it sustainable and cultural</div>
+      <div class="phase-keywords">
+        <span class="phase-kw">Governance Policies</span>
+        <span class="phase-kw">Automation</span>
+        <span class="phase-kw">Chargeback</span>
+        <span class="phase-kw">FinOps Culture</span>
+        <span class="phase-kw">Continuous Review</span>
+      </div>
+    </div>
+  </div>
+  <p class="lifecycle-loop">↺ Continuous loop — you never stop cycling through all three phases</p>
+
+  <br>
+  <div class="tip blue">
+    <span class="tip-icon">💡</span>
+    <div><strong>Exam Tip:</strong> Read for keywords. "We need to see / understand / report" = Inform. "We need to reduce / rightsize / commit" = Optimize. "We need to sustain / govern / automate" = Operate.</div>
+  </div>
+</div>
+
+<!-- ══ PRINCIPLES ════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">The 6 FinOps Principles</div>
+  <div class="grid-2">
+    <div class="card" style="border-left: 3px solid var(--blue)">
+      <div class="card-title">① Teams Need to Collaborate</div>
+      <p style="font-size:0.82rem;color:var(--muted)">Engineering, Finance, and Business work together — cloud cost is everyone's responsibility, not just IT's problem.</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--green)">
+      <div class="card-title">② Everyone Takes Ownership</div>
+      <p style="font-size:0.82rem;color:var(--muted)">The team that creates the resource owns the cost. Decentralized accountability with centralized enablement.</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--purple)">
+      <div class="card-title">③ A Centralized Team Drives FinOps</div>
+      <p style="font-size:0.82rem;color:var(--muted)">One FinOps team enables everyone else. They are coaches — not cost police. They set standards, not rules.</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--yellow)">
+      <div class="card-title">④ Reports Should Be Accessible & Timely</div>
+      <p style="font-size:0.82rem;color:var(--muted)">Real-time or near-real-time data. Last month's bill is too late. Everyone should be able to see their spend.</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--orange)">
+      <div class="card-title">⑤ Decisions Driven by Business Value</div>
+      <p style="font-size:0.82rem;color:var(--muted)">Cost is not the only metric. Value per dollar matters. Sometimes spending more is the right answer if it drives more value.</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--cyan)">
+      <div class="card-title">⑥ Take Advantage of Variable Cost Model</div>
+      <p style="font-size:0.82rem;color:var(--muted)">Cloud's variable cost model is a feature, not a bug. Scale down when not in use. Pay only for what you need.</p>
+    </div>
+  </div>
+  <br>
+  <div class="tip green">
+    <span class="tip-icon">🎯</span>
+    <div><strong>Core mindset:</strong> FinOps is about maximizing <strong>business value from cloud</strong> — not minimizing cost. The right answer is never just "spend less." It's "spend smarter."</div>
+  </div>
+</div>
+
+<!-- ══ DOMAINS ════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">The 6 FinOps Domains & Capabilities</div>
+  <div class="grid-2">
+
+    <div class="domain-card d1">
+      <div class="domain-num">Domain 01 · Inform Phase</div>
+      <div class="domain-name">Understanding Cloud Usage & Cost</div>
+      <ul class="domain-caps">
+        <li class="domain-cap">Data Ingestion & Normalization</li>
+        <li class="domain-cap">Cost Allocation</li>
+        <li class="domain-cap">Managing Shared Costs</li>
+        <li class="domain-cap">Data Analysis & Showback</li>
+      </ul>
+    </div>
+
+    <div class="domain-card d2">
+      <div class="domain-num">Domain 02 · Inform Phase</div>
+      <div class="domain-name">Performance Tracking & Benchmarking</div>
+      <ul class="domain-caps">
+        <li class="domain-cap">Measuring Unit Costs</li>
+        <li class="domain-cap">Forecasting</li>
+        <li class="domain-cap">Budget Management</li>
+      </ul>
+    </div>
+
+    <div class="domain-card d3">
+      <div class="domain-num">Domain 03 · Inform → Operate</div>
+      <div class="domain-name">Real-Time Decision Making</div>
+      <ul class="domain-caps">
+        <li class="domain-cap">Decision & Accountability Structure</li>
+        <li class="domain-cap">Managing Anomalies</li>
+      </ul>
+    </div>
+
+    <div class="domain-card d4">
+      <div class="domain-num">Domain 04 · Optimize Phase</div>
+      <div class="domain-name">Cloud Rate Optimization</div>
+      <ul class="domain-caps">
+        <li class="domain-cap">Managing Commitment-Based Discounts</li>
+        <li class="domain-cap">Cloud Policy & Governance</li>
+      </ul>
+    </div>
+
+    <div class="domain-card d5">
+      <div class="domain-num">Domain 05 · Optimize Phase</div>
+      <div class="domain-name">Cloud Usage Optimization</div>
+      <ul class="domain-caps">
+        <li class="domain-cap">Onboarding Workloads</li>
+        <li class="domain-cap">Resource Utilization & Efficiency</li>
+        <li class="domain-cap">Workload Management & Automation</li>
+      </ul>
+    </div>
+
+    <div class="domain-card d6">
+      <div class="domain-num">Domain 06 · Operate Phase</div>
+      <div class="domain-name">Organizational Alignment</div>
+      <ul class="domain-caps">
+        <li class="domain-cap">FinOps Education & Enablement</li>
+        <li class="domain-cap">Chargeback & Finance Integration</li>
+        <li class="domain-cap">FinOps Tool & Service Evaluation</li>
+        <li class="domain-cap">Intersecting Frameworks</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MATURITY MODEL ════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">FinOps Maturity Model — Crawl → Walk → Run</div>
+
+  <div class="diagram-wrap">
+    <div class="maturity-row maturity-header">
+      <div class="maturity-label"></div>
+      <div class="maturity-cell crawl">🐛 CRAWL</div>
+      <div class="maturity-cell walk">🚶 WALK</div>
+      <div class="maturity-cell run">🏃 RUN</div>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-label">Reporting</div>
+      <div class="maturity-cell crawl">Manual, monthly</div>
+      <div class="maturity-cell walk">Automated, weekly</div>
+      <div class="maturity-cell run">Real-time dashboards</div>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-label">Tagging</div>
+      <div class="maturity-cell crawl">Minimal / inconsistent</div>
+      <div class="maturity-cell walk">Policy defined</div>
+      <div class="maturity-cell run">Enforced + automated</div>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-label">Allocation</div>
+      <div class="maturity-cell crawl">Showback only</div>
+      <div class="maturity-cell walk">Partial chargeback</div>
+      <div class="maturity-cell run">Full chargeback + P&L</div>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-label">Commitments</div>
+      <div class="maturity-cell crawl">Ad hoc RIs</div>
+      <div class="maturity-cell walk">Planned coverage &gt;50%</div>
+      <div class="maturity-cell run">Coverage &gt;70%, auto-managed</div>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-label">Reviews</div>
+      <div class="maturity-cell crawl">Quarterly</div>
+      <div class="maturity-cell walk">Monthly</div>
+      <div class="maturity-cell run">Continuous</div>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-label">Culture</div>
+      <div class="maturity-cell crawl">Small FinOps team</div>
+      <div class="maturity-cell walk">Cross-functional team</div>
+      <div class="maturity-cell run">FinOps embedded in org</div>
+    </div>
+  </div>
+
+  <div class="tip yellow">
+    <span class="tip-icon">⚠️</span>
+    <div><strong>Exam Trap:</strong> Most orgs are in <strong>Walk</strong>. When asked "what should this org do next?" — pick the action that advances them to the next stage, not a stage above where they are.</div>
+  </div>
+</div>
+
+<!-- ══ PERSONAS ══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">FinOps Personas — Who Wants What</div>
+  <div class="grid-3">
+
+    <div class="persona">
+      <div class="persona-role">FinOps Team</div>
+      <div class="persona-name">FinOps Practitioner</div>
+      <div class="persona-goal" style="background:#58a6ff15;color:#79c0ff">Goal: Enable org, build culture</div>
+      <div class="persona-pain">Pain: Getting teams to care about cost</div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-role">Executive</div>
+      <div class="persona-name">CFO / Finance</div>
+      <div class="persona-goal" style="background:#3fb95015;color:#56d364">Goal: Predictable costs, budget accuracy</div>
+      <div class="persona-pain">Pain: Cloud bill surprises at month-end</div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-role">Executive</div>
+      <div class="persona-name">CTO / CIO</div>
+      <div class="persona-goal" style="background:#a371f715;color:#c49fff">Goal: Speed, reliability, innovation</div>
+      <div class="persona-pain">Pain: Being blamed for cost without context</div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-role">Engineering</div>
+      <div class="persona-name">Engineering Lead</div>
+      <div class="persona-goal" style="background:#db6d2815;color:#f0a070">Goal: Ship fast, scale easily</div>
+      <div class="persona-pain">Pain: Budget constraints slowing delivery</div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-role">Product</div>
+      <div class="persona-name">Product Owner</div>
+      <div class="persona-goal" style="background:#39d35315;color:#7eeea0">Goal: Feature delivery, user growth</div>
+      <div class="persona-pain">Pain: Cloud costs eating product margin</div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-role">Procurement</div>
+      <div class="persona-name">Procurement / ITAM</div>
+      <div class="persona-goal" style="background:#76e3ea15;color:#a8edf0">Goal: Contracts, discounts, compliance</div>
+      <div class="persona-pain">Pain: Shadow IT, untracked commitments</div>
+    </div>
+
+  </div>
+  <br>
+  <div class="tip blue">
+    <span class="tip-icon">💡</span>
+    <div><strong>Exam Tip:</strong> Questions often describe a persona's concern and ask which FinOps action addresses it. Map persona → pain → domain → action.</div>
+  </div>
+</div>
+
+<!-- ══ COMMITMENT DISCOUNTS ══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Commitment-Based Discounts — Rate Optimization</div>
+  <div class="commit-grid">
+
+    <div class="commit-card" style="border-top:3px solid var(--orange)">
+      <div class="commit-name">Reserved Instances</div>
+      <span class="commit-badge" style="background:#db6d2820;color:#db6d28">AWS</span>
+      <div class="commit-discount" style="color:var(--orange)">Up to 72%</div>
+      <div class="commit-detail">
+        Commit to specific instance type, AZ, OS for 1 or 3 years.<br><br>
+        <strong style="color:var(--text)">Standard RI</strong> — max discount, no exchange<br>
+        <strong style="color:var(--text)">Convertible RI</strong> — can exchange, lower discount<br><br>
+        Best for: stable, predictable workloads
+      </div>
+    </div>
+
+    <div class="commit-card" style="border-top:3px solid var(--blue)">
+      <div class="commit-name">Savings Plans</div>
+      <span class="commit-badge" style="background:#58a6ff20;color:#58a6ff">AWS</span>
+      <div class="commit-discount" style="color:var(--blue)">Up to 66%</div>
+      <div class="commit-detail">
+        Commit to $/hr of compute usage. More flexible than RIs.<br><br>
+        <strong style="color:var(--text)">Compute SP</strong> — any EC2, Lambda, Fargate<br>
+        <strong style="color:var(--text)">EC2 Instance SP</strong> — specific family in region<br><br>
+        Best for: dynamic workloads, mixed instance types
+      </div>
+    </div>
+
+    <div class="commit-card" style="border-top:3px solid var(--green)">
+      <div class="commit-name">CUDs (GCP)</div>
+      <span class="commit-badge" style="background:#3fb95020;color:#3fb950">GCP</span>
+      <div class="commit-discount" style="color:var(--green)">Up to 57%</div>
+      <div class="commit-detail">
+        Committed Use Discounts — GCP equivalent of RIs.<br><br>
+        <strong style="color:var(--text)">Resource-based</strong> — specific vCPU/memory<br>
+        <strong style="color:var(--text)">Spend-based</strong> — commit to $/hr on a service<br><br>
+        Best for: steady-state GCP workloads
+      </div>
+    </div>
+
+  </div>
+
+  <br>
+  <table>
+    <thead><tr><th>Metric</th><th>Definition</th><th>Target</th></tr></thead>
+    <tbody>
+      <tr><td><strong>RI / SP Coverage</strong></td><td>% of eligible on-demand hours covered by commitments</td><td style="color:var(--green)">≥ 70%</td></tr>
+      <tr><td><strong>RI / SP Utilization</strong></td><td>% of your reserved capacity actually being used</td><td style="color:var(--green)">≥ 90%</td></tr>
+    </tbody>
+  </table>
+
+  <br>
+  <div class="tip red">
+    <span class="tip-icon">🚫</span>
+    <div><strong>Exam Trap:</strong> Buying more commitments is NOT always right. If utilization is already low, buying more makes it worse. <strong>Optimize usage first, then commit to what you need.</strong></div>
+  </div>
+</div>
+
+<!-- ══ USAGE OPTIMIZATION ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Cloud Usage Optimization — Eliminate Waste</div>
+  <div class="grid-2">
+    <div>
+      <table>
+        <thead><tr><th>Waste Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><span style="color:var(--red)">Idle Resources</span></td><td>Running but 0% utilization</td></tr>
+          <tr><td><span style="color:var(--orange)">Underutilized</span></td><td>Consistent CPU &lt; 10%</td></tr>
+          <tr><td><span style="color:var(--yellow)">Orphaned Storage</span></td><td>EBS volumes / snapshots detached</td></tr>
+          <tr><td><span style="color:var(--purple)">Oversized</span></td><td>Provisioned for peak, rarely hits it</td></tr>
+          <tr><td><span style="color:var(--muted)">Zombie Resources</span></td><td>Forgotten test/dev instances</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title" style="color:var(--cyan)">Spot / Preemptible Instances</div>
+        <table style="margin-top:8px">
+          <tbody>
+            <tr><td>Discount</td><td style="color:var(--green)"><strong>Up to 90%</strong> vs on-demand</td></tr>
+            <tr><td>Risk</td><td style="color:var(--red)">Can be interrupted (2 min notice)</td></tr>
+            <tr><td>Good for</td><td>Batch jobs, CI/CD, stateless</td></tr>
+            <tr><td>Avoid for</td><td>Databases, stateful, critical apps</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <div class="card">
+    <div class="card-title" style="color:var(--green)">Rightsizing — 5 Steps</div>
+    <br>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div style="flex:1;min-width:140px;background:var(--surface);border-radius:6px;padding:10px;text-align:center;font-size:0.78rem">
+        <div style="font-size:1.4rem">📊</div>
+        <div style="color:var(--blue);font-weight:700;margin:4px 0">1. Collect</div>
+        CPU, memory, network utilization metrics
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--surface);border-radius:6px;padding:10px;text-align:center;font-size:0.78rem">
+        <div style="font-size:1.4rem">🔍</div>
+        <div style="color:var(--purple);font-weight:700;margin:4px 0">2. Identify</div>
+        Resources below utilization threshold
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--surface);border-radius:6px;padding:10px;text-align:center;font-size:0.78rem">
+        <div style="font-size:1.4rem">💡</div>
+        <div style="color:var(--yellow);font-weight:700;margin:4px 0">3. Recommend</div>
+        Smaller instance type or family
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--surface);border-radius:6px;padding:10px;text-align:center;font-size:0.78rem">
+        <div style="font-size:1.4rem">🧪</div>
+        <div style="color:var(--orange);font-weight:700;margin:4px 0">4. Test</div>
+        Validate in non-production first
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--surface);border-radius:6px;padding:10px;text-align:center;font-size:0.78rem">
+        <div style="font-size:1.4rem">✅</div>
+        <div style="color:var(--green);font-weight:700;margin:4px 0">5. Apply</div>
+        Implement in production
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SHARED COSTS ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Shared Cost Strategies</div>
+  <table>
+    <thead><tr><th>Strategy</th><th>How It Works</th><th>Best For</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--blue)">Proportional</strong></td>
+        <td>Split by each team's % of total usage</td>
+        <td>General workloads with measurable usage</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--green)">Even Split</strong></td>
+        <td>Divide equally among all consuming teams</td>
+        <td>Small orgs, similar usage patterns</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--yellow)">Fixed</strong></td>
+        <td>Pre-agreed percentages negotiated by finance</td>
+        <td>Stable environments, chargeback orgs</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--purple)">Direct</strong></td>
+        <td>Tag everything — no pooling at all</td>
+        <td>Ideal state, rarely fully achievable</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ KEY TERMS ══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Key Terms — Rapid Reference</div>
+  <div class="terms-grid">
+    <div class="term"><div class="term-word">Unit Economics</div><div class="term-def">Cloud cost mapped to a unit of business value (cost per user, per order, per API call)</div></div>
+    <div class="term"><div class="term-word">Showback</div><div class="term-def">Report costs to teams — informational only, no financial consequence</div></div>
+    <div class="term"><div class="term-word">Chargeback</div><div class="term-def">Teams are actually billed for their cloud costs — real financial accountability</div></div>
+    <div class="term"><div class="term-word">Blended Rate</div><div class="term-def">Average cost across on-demand + reserved + spot pricing tiers</div></div>
+    <div class="term"><div class="term-word">Unblended Rate</div><div class="term-def">Actual rate paid for each specific resource at time of use</div></div>
+    <div class="term"><div class="term-word">Amortized Cost</div><div class="term-def">RI/SP upfront costs spread evenly over the commitment term</div></div>
+    <div class="term"><div class="term-word">RI Coverage</div><div class="term-def">% of eligible on-demand hours covered by reserved instances (target ≥70%)</div></div>
+    <div class="term"><div class="term-word">RI Utilization</div><div class="term-def">% of reserved capacity actually being used (target ≥90%)</div></div>
+    <div class="term"><div class="term-word">Forecast Variance</div><div class="term-def">Difference between predicted and actual spend — high variance = poor visibility</div></div>
+    <div class="term"><div class="term-word">Cost Allocation Tags</div><div class="term-def">Labels on resources that must be activated in billing to appear in reports</div></div>
+    <div class="term"><div class="term-word">Anomaly Detection</div><div class="term-def">Automated alerts when spend deviates from expected historical baseline</div></div>
+    <div class="term"><div class="term-word">Cloud CoE</div><div class="term-def">Cloud Center of Excellence — where FinOps team typically sits, sets standards</div></div>
+    <div class="term"><div class="term-word">Lift & Shift</div><div class="term-def">Move workloads to cloud as-is with no re-architecture (may not be cost-optimal)</div></div>
+    <div class="term"><div class="term-word">GreenOps</div><div class="term-def">Cloud sustainability and carbon reduction — intersects with FinOps cost efficiency</div></div>
+    <div class="term"><div class="term-word">Crawl → Walk → Run</div><div class="term-def">FinOps maturity model — organizations progress through these stages over time</div></div>
+    <div class="term"><div class="term-word">Variable Cost Model</div><div class="term-def">Cloud's core pricing model — pay for what you use, scale up or down anytime</div></div>
+  </div>
+</div>
+
+<!-- ══ DOMAIN → LIFECYCLE MAPPING ════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Domain → Lifecycle Quick Map</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;display:block;margin:0 auto">
+      <!-- Phase boxes -->
+      <rect x="10" y="10" width="260" height="180" rx="10" fill="#0d2d6e33" stroke="#58a6ff55" stroke-width="1.5"/>
+      <rect x="320" y="10" width="260" height="180" rx="10" fill="#0a2d1a33" stroke="#3fb95055" stroke-width="1.5"/>
+      <rect x="630" y="10" width="260" height="180" rx="10" fill="#2d1b0033" stroke="#d2992255" stroke-width="1.5"/>
+      <!-- Phase labels -->
+      <text x="140" y="38" text-anchor="middle" font-weight="800" font-size="15" fill="#58a6ff">INFORM</text>
+      <text x="450" y="38" text-anchor="middle" font-weight="800" font-size="15" fill="#3fb950">OPTIMIZE</text>
+      <text x="760" y="38" text-anchor="middle" font-weight="800" font-size="15" fill="#d29922">OPERATE</text>
+      <!-- Inform domains -->
+      <rect x="25" y="50" width="230" height="28" rx="5" fill="#58a6ff22"/>
+      <text x="140" y="69" text-anchor="middle" font-size="11" fill="#79c0ff">Understanding Cloud Usage & Cost</text>
+      <rect x="25" y="85" width="230" height="28" rx="5" fill="#58a6ff1a"/>
+      <text x="140" y="104" text-anchor="middle" font-size="11" fill="#79c0ff">Performance Tracking &amp; Benchmarking</text>
+      <rect x="25" y="120" width="230" height="28" rx="5" fill="#a371f71a"/>
+      <text x="140" y="139" text-anchor="middle" font-size="11" fill="#c49fff">Real-Time Decision Making</text>
+      <!-- Optimize domains -->
+      <rect x="335" y="50" width="230" height="28" rx="5" fill="#3fb95022"/>
+      <text x="450" y="69" text-anchor="middle" font-size="11" fill="#56d364">Cloud Rate Optimization</text>
+      <rect x="335" y="85" width="230" height="28" rx="5" fill="#3fb9501a"/>
+      <text x="450" y="104" text-anchor="middle" font-size="11" fill="#56d364">Cloud Usage Optimization</text>
+      <!-- Operate domains -->
+      <rect x="645" y="50" width="230" height="130" rx="5" fill="#d2992222"/>
+      <text x="760" y="80" text-anchor="middle" font-size="11" fill="#d29922">Organizational Alignment</text>
+      <text x="760" y="100" text-anchor="middle" font-size="10" fill="#8b949e">(Education, Chargeback,</text>
+      <text x="760" y="116" text-anchor="middle" font-size="10" fill="#8b949e">Tools, Frameworks)</text>
+      <!-- Decision Making also in Operate -->
+      <text x="760" y="148" text-anchor="middle" font-size="10" fill="#a371f7">+ Real-Time Decision Making</text>
+      <text x="760" y="164" text-anchor="middle" font-size="10" fill="#8b949e">(spans all phases)</text>
+      <!-- Arrows -->
+      <text x="291" y="105" font-size="20" fill="#4a5568">→</text>
+      <text x="601" y="105" font-size="20" fill="#4a5568">→</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ EXAM TIPS ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Exam Strategy — 8 Tips</div>
+  <div class="exam-tips">
+    <div class="exam-tip">
+      <div class="exam-tip-title">Collaborate first — always</div>
+      <div class="exam-tip-body">FinOps is cross-functional. If one answer involves a single team acting alone vs. Engineering + Finance + Business working together — pick collaborate. Always.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">Value over cost savings</div>
+      <div class="exam-tip-body">The FinOps answer is almost never "spend less." It's "spend smarter" or "tie spend to business value." Cost reduction without context is wrong.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">Inform before you Optimize</div>
+      <div class="exam-tip-body">If an org can't see their spend clearly yet, the right next step is Inform — not Optimize. You can't fix what you can't measure.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">The RI / Savings Plan trap</div>
+      <div class="exam-tip-body">Buying more commitments is NOT always right. If utilization is already low, more commitments = more waste. Optimize usage first, then commit to what you actually need.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">Read for maturity clues</div>
+      <div class="exam-tip-body">"What should this org do NEXT?" — look for clues about where they are in Crawl/Walk/Run. Pick the action that advances them to the next stage, not two stages ahead.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">Map persona to action</div>
+      <div class="exam-tip-body">CFO concerned about surprises → showback/forecast. Engineer annoyed by limits → education + ownership model. Persona → Pain → Domain → Action.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">Unit Economics is the north star</div>
+      <div class="exam-tip-body">When asked how to measure FinOps success, think unit economics first — cost per user, cost per transaction — not total spend reduction.</div>
+    </div>
+    <div class="exam-tip">
+      <div class="exam-tip-title">Open book — use it for definitions</div>
+      <div class="exam-tip-body">The FinOps Foundation glossary at finops.org is your lifeline. If you blank on a term, don't guess — look it up. You have 1.8 min/question — budget your time.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ═════════════════════════════════════════════════════════════ -->
+<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:0.78rem;border-top:1px solid var(--border);margin-top:40px">
+  <p>FinOps Practitioner (FOCP) Exam Cheat Sheet · ai-terminal-workflow · finops-projects/finops-practitioner-exam-prep</p>
+  <p style="margin-top:6px">Reference: <strong style="color:var(--blue)">finops.org/framework</strong> · Open book during exam</p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
