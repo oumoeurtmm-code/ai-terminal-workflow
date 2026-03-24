@@ -145,9 +145,7 @@ ai-terminal-workflow/
 │   ├── best_practices/
 │   ├── cost_optimization/
 │   └── open_source_tools/
-├── security-projects/                        # (planned)
-├── app-ideas/                                # Real Estate Analyzer (planned)
-└── brain-dump/                               # Working notes
+└── security-projects/                        # (planned)
 ```
 
 > Project pages (`index.html`) are automatically synced to [oumoeurtmm-code.github.io](https://oumoeurtmm-code.github.io) via GitHub Actions on every push.
