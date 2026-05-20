@@ -75,8 +75,8 @@ aws sts get-caller-identity
 
 ```bash
 # Clone the repo
-git clone https://github.com/oumoeurtmm-code/ai-terminal-workflow.git
-cd ai-terminal-workflow
+git clone https://github.com/oumoeurtmm-code/aws-cloud-labs.git
+cd aws-cloud-labs
 
 # Deploy a lab (example: Lab 01)
 bash projects/01-static-website-aws-fundamentals/scripts/deploy.sh
